@@ -86,7 +86,7 @@ bootstrap.php
 	git submodule update --init
 
 
-delete file?
+delete file
 -----
 	
 	$this->Html->link('delete',array('controller'=>'image','action'=>'delete',$id,'plugin'=>'ImageTable'));
@@ -100,12 +100,12 @@ save path
 Uses ImageTableHtmlHelper
 -----
 	
-	Dinamic create thumbnail
+	Dynamic create thumbnail
 
 	<?php echo $this->ImageTableHtml->image($post['MainPhoto']);?> ->originam image
 	
 
-	Dinamic Image uses.
+	Dynamic Image uses.
 
 	option.
 	<?php echo $this->ImageTableHtml->image($post['MainPhoto'],arary('w'=>200,'h'=>200,'alt'=>'test'));?>

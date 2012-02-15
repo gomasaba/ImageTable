@@ -5,15 +5,26 @@ class UploadBehavior extends ModelBehavior {
 
 	public $config;
 
-	public $imagin;
+	public $imagine;
+
 
 	public function setup(Model $model, $config = array()) {
+		//imagie check
+		$imaginebase = (Configure::read('ImageTable.Imagine_base')) ? Configure::read('ImageTable.Imagine_base') : VENDORS;
+		if(!file_exists(rtrim($imaginebase,DS) . DS . 'imagine.phar')){
+			$imaginebase = CakePlugin::path('ImageTable') . 'Vendor' . DS . 'Imagine';
+			if(!file_exists( $imaginebase . DS . 'imagine.phar')){
+				throw new CakeException('imagine.phar not found.');
+			}
+		}
+		require_once 'phar://' . rtrim($imaginebase,DS). DS . 'imagine.phar';
+ 		$this->imagine = new \Imagine\Gd\Imagine();
 		$this->config = $config;
 	}
 
 
 	public function beforeValidate(Model $model) {
-		if(!is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
+		if(!$this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
 			unset($model->data[$model->alias]);
 		}
 		return true;
@@ -42,14 +53,29 @@ class UploadBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $model) {
 		$dir = $this->getPath($model);
-		system("rm -rf {$dir}");
+		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            if ($file->isFile()) {
+				@unlink($file->getPathname());
+            }
+            if ($file->isDir()) {
+				@rmdir($file->getPathname());
+            }
+        }
+	}
+
+	public function move_uploaded_file($filename, $destination){
+		return move_uploaded_file($filename, $destination);
+	}
+
+	public function is_uploaded_file($filename){
+		return is_uploaded_file($filename);
 	}
 /**
- *  after delete
+ *  $model->data[$model->alias] prepare for save method
  *
  */
 	public function prepare(Model $model){
-		if(is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
+		if($this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
 			$filename = $model->data[$model->alias]['file']['name'];
 			$model->data[$model->alias]['filename'] = $model->data[$model->alias]['file']['name'];
 			$model->data[$model->alias]['type'] = substr($filename, strrpos($filename, '.') + 1);
@@ -60,37 +86,28 @@ class UploadBehavior extends ModelBehavior {
  *
  */
 	public function getPath(Model $model){
-		$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : WWW_ROOT;
-		$dir = rtrim($dir,DS).DS.$model->id;
-		if(!is_dir($dir)){
-			mkdir($dir,0777,true);
+		if($model->id !=null){
+			$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : WWW_ROOT;
+			$dir = rtrim($dir,DS).DS.$model->id;
+			if(!is_dir($dir)){
+				mkdir($dir,0777,true);
+			}
+			return $dir;		
+		}else{
+			return false;
 		}
-		return $dir;
 	}
 /**
- *  after delete
- *
- */
-	public function getImagine(){
-		if(isset($this->imagin)){
-			return $this->imagin;
-		}
-		$imaginbase = (Configure::read('ImageTable.Imagine_base')) ? Configure::read('ImageTable.Imagine_base') : VENDORS;
- 		require_once 'phar://' . rtrim($imaginbase,DS). DS . 'imagine.phar';
- 		return $this->imagin = new \Imagine\Gd\Imagine();
- 	}
-
-/**
- * 
+ * upload file and create thumbnails.
  *
  * @var
  * @return bool
  */
 	public function process(Model $model){
 		$path = $this->getPath($model);
-		if(is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
+		if($this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
 			$img = $model->data[$model->alias];
-			if(move_uploaded_file($img['file']['tmp_name'], $path.DS.$img['filename'])){
+			if($this->move_uploaded_file($img['file']['tmp_name'], $path.DS.$img['filename'])){
 				if(array_key_exists('thumbnail',$this->config)){
 					$this->createThumbnail($model);
 				}
@@ -99,9 +116,6 @@ class UploadBehavior extends ModelBehavior {
 				$model->delete();
 				return false;
 			}
-			// $model->data[$model->alias]['filename'] = $model->data[$model->alias]['file']['name'];
-			// $model->data[$model->alias]['contents'] = file_get_contents($model->data[$model->alias]['file']['tmp_name']);
-			// return true;
 		}else{
 			return false;
 		}
@@ -113,7 +127,6 @@ class UploadBehavior extends ModelBehavior {
  * @return bool
  */
  	public function createThumbnail(Model $model){
- 		$Imagine =  $this->getImagine();
  		foreach($this->config['thumbnail'] as $prefix => $option){
  			$orign_fullpath = $this->getPath($model) .DS . $model->data[$model->alias]['filename'];
 			$thumb_fullpath = $this->getPath($model) .DS . $prefix .'_'. $model->data[$model->alias]['filename'];
@@ -124,7 +137,7 @@ class UploadBehavior extends ModelBehavior {
 			} else {
 				$mode = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
 			}
-			$Image = $Imagine->open($orign_fullpath);
+			$Image = $this->imagine->open($orign_fullpath);
 			$createfile = $Image->thumbnail($size,$mode);
 			$createfile->save($thumb_fullpath);
  		}
