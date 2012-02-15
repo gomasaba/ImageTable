@@ -27,6 +27,9 @@ class UploadBehavior extends ModelBehavior {
 		if(!$this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
 			unset($model->data[$model->alias]);
 		}
+		if(empty($model->data[$model->alias]['file']['tmp_name'])){
+			unset($model->data[$model->alias]);
+		}		
 		return true;
 	}
 

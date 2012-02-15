@@ -79,7 +79,9 @@ class TestUploadBehavior extends UploadBehavior{
 	public $is_upload_flg = true;
 
 	public function move_uploaded_file($filename, $destination){
-		copy($filename,$destination);
+		if(!empty($filename) && !empty($destination)){			
+			copy($filename,$destination);
+		}
 		return $this->move_upload_flg;
 	}
 
@@ -323,6 +325,62 @@ class UploadBehaviorTestCase extends CakeTestCase {
 			@rmdir(TMP.'tests'.DS.$album['id']);
 		}
  	}
+/**
+ * test
+ * @todo
+ */
+ 	public function testsaveAllMultiFile_NotUload_NotSave(){
+		$file = CakePlugin::path('ImageTable').'Test'.DS.'test.jpg';
+ 		$post = array(
+ 			'Post'=>array(
+ 				'name'=>'test article title',
+	 		),
+	 		'PhotoAlbum'=>array(
+	 			array(
+					'groupname' => 'album',
+					'model' => 'Post',
+					'file' => array(
+							'name' => 'test.jpg',
+							'type' => 'image/jpeg',
+							'tmp_name' => $file,
+							'error' => 0,
+							'size' => 827000,
+					),
+		 		),
+	 			array(
+					'groupname' => 'album',
+					'model' => 'Post',
+					'file' => array(
+							'name' => '',
+							'type' => '',
+							'tmp_name' => '',
+							'error' => 0,
+							'size' => 0,
+					),
+		 		),
+	 			array(
+					'groupname' => 'album',
+					'model' => 'Post',
+					'file' => array(
+							'name' => '',
+							'type' => '',
+							'tmp_name' => '',
+							'error' => 0,
+							'size' => 0,
+					),
+		 		),
+
+			),
+		);
+
+		$this->assertTrue($this->Post->saveAll($post,array('validate'=>'first')));
+ 		$result = $this->Post->find('first',array(
+	 						'conditions'=>array(
+		 							'Post.id'=>$this->Post->getLastInsertID()
+				 			)));
+		$this->assertEqual(1,count($result['PhotoAlbum']));
+ 	}
+
 /**
  * test upload false image record delete
  * @todo
