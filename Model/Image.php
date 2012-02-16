@@ -25,36 +25,32 @@ Class Image extends AppModel{
  * @var array
  */
 	public $validate = array(
+		'model' => array(
+			'rule' => 'notEmpty',
+			'message' => 'Model Name not empty',
+			'on' => 'create',
+		),
 		'file' => array(
-			/*
-			'file' => array(
-				'rule' => 'notEmpty',
-				'message' => 'image not empty',
-				'on' => 'create',
-			),
-			*/
 			'name' => array(
-				array(
-					'rule' => array('extension'),
-					'on' => 'create',
-					'message' => 'file is not allow extension',
-					'allowEmpty'=>true,
-					'required'=>false,
-				),
-				array(
 					'rule' => array('checkFilename'),
 					'on' => 'create',
 					'message' => 'filename is not alphanumeric',
 					'allowEmpty'=>true,
 					'required'=>false,
-				)
+			),
+			'type'=>array(
+					'rule' => array('extension'),
+					'on' => 'create',
+					'message' => 'file is not allow extension',
+					'allowEmpty'=>true,
+					'required'=>false,
 			),
 			'size' => array(
-				'rule' => array('checkSize', 2097152),
-				'on' => 'create',
-				'message' => 'filesize too large limit is 2MB',
-				'allowEmpty'=>true,
-				'required'=>false,
+					'rule' => array('checkSize', 2097152),
+					'on' => 'create',
+					'message' => 'filesize too large limit is 2MB',
+					'allowEmpty'=>true,
+					'required'=>false,
 			),
 		),
 	);

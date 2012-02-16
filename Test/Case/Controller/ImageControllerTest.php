@@ -53,7 +53,6 @@ class ImageControllerTestCase extends CakeTestCase {
  */
 	public function tearDown() {
 		unset($this->Controller);
-		unset($this->Image);
 		ClassRegistry::flush();
 		parent::tearDown();
 	}
@@ -66,12 +65,15 @@ class ImageControllerTestCase extends CakeTestCase {
 	}
 	
 	public function _unset_file(){
-		$dir = TMP.'tests'.DS.'1';
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            if ($file->isFile()) {
-				@unlink($file->getPathname());
-            }
-        }
+		$dir = TMP.'tests'.DS;
+		$iterator = new RecursiveDirectoryIterator($dir);
+		foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+			if ($file->isDir()) {
+				rmdir($file->getPathname());
+			} else {
+				unlink($file->getPathname());
+			}
+		}
 	}
 
 

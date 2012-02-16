@@ -56,14 +56,14 @@ class UploadBehavior extends ModelBehavior {
  */
 	public function afterDelete(Model $model) {
 		$dir = $this->getPath($model);
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
-            if ($file->isFile()) {
-				@unlink($file->getPathname());
-            }
-            if ($file->isDir()) {
-				@rmdir($file->getPathname());
-            }
-        }
+		$iterator = new RecursiveDirectoryIterator($dir);
+		foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
+			if ($file->isDir()) {
+				rmdir($file->getPathname());
+			} else {
+				unlink($file->getPathname());
+			}
+		}
 	}
 
 	public function move_uploaded_file($filename, $destination){
