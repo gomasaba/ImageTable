@@ -13,21 +13,13 @@ class ImageTableHtmlHelper extends AppHelper {
 	public $hasMany;
 
 
-
-	public $default = array(
-		'w'=>200,
-		'h'=>100,
-		'alt'=>null,
-		'prefix'=>null,
-	);
-
 	public $parseAssociation = array(
 	);
 
 
 	public function autoform($model=null,$attribute=null){
 		if (is_array($model) && empty($attribute)) {
-			$options = $model;
+			$attribute = $model;
 			$model = null;
 		}
 		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
@@ -35,32 +27,30 @@ class ImageTableHtmlHelper extends AppHelper {
 		}
 		$modelObj = ClassRegistry::getObject($model);
 
-		$this->hasOne = (isset($model->hasOne)) ? $this->prepare($model->hasOne) : false;
-		$this->hasMany = (isset($model->hasMany)) ? $this->prepare($model->hasMany) : false;
+		$this->hasOne = (isset($modelObj->hasOne)) ? $this->prepare($modelObj->hasOne) : false;
+		$this->hasMany = (isset($modelObj->hasMany)) ? $this->prepare($modelObj->hasMany) : false;
 
 		$out = array();
 
 		if($this->hasOne){
-			foreach ($this->hasOne as $row) {
-				$out[] = $this->__inputfile($key,$row['model'],$row['groupname'],$attribute);
+			foreach ($this->hasOne as $key => $prepared) {
+				if(isset($this->request->data[$prepared['className']])){
+					$out[] = $this->__editfile($this->request->data[$prepared['className']],$attribute);
+				}else{
+					$out[] = $this->__inputfile($prepared);						
+				}
 			}
 		}
-
-
-		foreach ($this->association as $type => $val) {
-			if($type==='hasMany'){
-				foreach ($val as $key=>$row) {
-					$mkey = $row['classAlias'].'.'.$key;					
-					$out[] = $this->__inputfile($mkey,$row['model'],$row['groupname'],$attribute);					
-				}
-			}else{
-				foreach ($val as $row) {
-					$key = $row['classAlias'];
-					if(isset($this->request->data[$key]) && !empty($this->request->data[$key]['id'])){
-						$out[] = $this->__editfile($this->request->data[$key],$attribute);						
-					}else{
-						$out[] = $this->__inputfile($key,$row['model'],$row['groupname'],$attribute);
+		if($this->hasMany){
+			foreach ($this->hasMany as $key => $prepared) {
+				if(isset($this->request->data[$prepared['className']])){
+					$this->hasManyCount = $this->hasManyCount - count($this->request->data[$prepared['className']]);
+					foreach($this->request->data[$prepared['className']] as $record){
+						$out[] = $this->__editfile($record,$attribute);
 					}
+				}
+				for($i=1; $i <= $this->hasManyCount; $i++){
+					$out[] = $this->__inputfile($prepared,$i);					
 				}
 			}
 		}
@@ -87,18 +77,19 @@ class ImageTableHtmlHelper extends AppHelper {
 		return $return;
 	}
 
-	protected function __inputfile(){
+	protected function __inputfile($prepared,$multi=false){
 		$out = '';
-		$out .= $this->Form->input(rtrim($key,'.').'.file',array('type'=>'file'));
-		$out .= $this->Form->input(rtrim($key,'.').'.model',array('type'=>'hidden','value'=>$model));
-		$out .= $this->Form->input(rtrim($key,'.').'.groupname',array('type'=>'hidden','value'=>$groupname));
+		$key = ($multi) ? $prepared['className'].'.'.$multi : $prepared['className'];
+		$out .= $this->Form->input($key.'.file',array('type'=>'file'));
+		$out .= $this->Form->input($key.'.model',array('type'=>'hidden','value'=>$prepared['model']));
+		$out .= $this->Form->input($key.'.groupname',array('type'=>'hidden','value'=>$prepared['groupname']));			
 		return $out;
 	}
 
-	protected function __editfile($data,$attribute){
+	protected function __editfile($data,$attribute=array()){
 		$out = '';
 		$out .= $this->image($data,$attribute);
-		$out .= $this->Html->link('delete',array('controller'=>'image','action'=>'delete',$data['id'],'plugin'=>'ImageTable'));
+		$out .= $this->Html->link(__('delete'),array('controller'=>'image','action'=>'delete',$data['id'],'plugin'=>'ImageTable'));
 		return $out;
 	}
 
@@ -106,20 +97,19 @@ class ImageTableHtmlHelper extends AppHelper {
 	public function image(array $record,$option=array()){
 		if(array_key_exists('id',$record) && array_key_exists('filename',$record) && !empty($record['id']) && !empty($record['filename'])){
 			$fullpath = $this->getPath($record);
-			$url = (Configure::read('ImageTable.upload_url')) ? Configure::read('ImageTable.upload_url') : Router::url('/',true);
-			if(!empty($option)){
-				extract(array_replace_recursive($this->default,$option));
-				if($prefix){
-					$path = DS.$record['id'].DS.$prefix.$record['filename'];
-				}else{
-					$path = DS.$record['id'].DS.$w.DS.$h.DS.$record['filename'];
-				}
-			}else{
-				$path = DS.$record['id'].DS.$record['filename'];			
+			$url = (Configure::read('ImageTable.upload_url')) ? Configure::read('ImageTable.upload_url') : Router::url('/',true);			
+			if(isset($option['prefix'])){
+				$path = DS.$record['id'].DS.$option['prefix'].'_'.$record['filename'];
+				unset($option['prefix']);
 			}
-			$alttag = (isset($alt)) ? ' alt="'.$alt.'"':null;
-			$tag = '<img src="'.$url.$path.'"'.$alttag.' />';
-			return $tag;
+			if(isset($option['w']) && isset($option['h'])){
+				$path = DS.$record['id'].DS.$option['w'].DS.$option['h'].DS.$record['filename'];
+				unset($option['w'],$option['h']);
+			}
+			if(!isset($path)){				
+				$path = DS.$record['id'].DS.$record['filename'];
+			}
+			return $this->Html->image($url.$path,$option);
 		}
 		return;
 	}
