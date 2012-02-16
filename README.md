@@ -3,7 +3,12 @@ Simple upload Image and Generate Thumbnail for CakePHP2
 
 Thumbnail Generate from Imagine
 
-[Imagine](https://github.com/avalanche123/Imagine)
+[Imagine] (https://github.com/avalanche123/Imagine)
+
+I inspire from MediaPlugin and Attach
+
+	MediaPlugin https://github.com/davidpersson/media
+	Attach  https://github.com/krolow/Attach
 
 
 create images table
@@ -13,7 +18,7 @@ create images table
 	  `id` int(11) NOT NULL AUTO_INCREMENT,
 	  `model` varchar(150) NOT NULL,
 	  `foreign_key` int(11) NOT NULL,
-	  `groupname` varchar(64) NOT NULL,
+	  `groupname` varchar(64),
 	  `filename` varchar(150) NOT NULL,
 	  `type` varchar(32) NOT NULL,
 	  PRIMARY KEY (`id`)
