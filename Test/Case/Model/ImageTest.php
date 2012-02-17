@@ -27,8 +27,16 @@ class TestUploadBehavior extends UploadBehavior{
 }
 
 
-Class ImageTest extends CakeTestCase{
+Class ImageTestCase extends CakeTestCase{
 
+/**
+ * Fixtures
+ *
+ * @var array
+ */
+	public $fixtures = array(
+			'plugin.image_table.image',
+	);
 
 /**
  * setUp method
@@ -37,8 +45,7 @@ Class ImageTest extends CakeTestCase{
  */
 	public function setUp(){
 		$this->Image = ClassRegistry::init('ImageTable.Image');
-		$this->Image->Behaviors->detach('ImageTable.Upload');		
-		$this->Image->Behaviors->attach('TestUpload');
+		$this->Image->Behaviors->detach('Upload');
 		parent::setUp();
 	}
 /**
@@ -47,9 +54,9 @@ Class ImageTest extends CakeTestCase{
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->Image);
 		ClassRegistry::flush();
-		parent::tearDown();
 	}
 
 	public function _set_success_data(){
@@ -74,20 +81,46 @@ Class ImageTest extends CakeTestCase{
 		$this->Image->set($this->_set_success_data());
 		$this->assertTrue($this->Image->validates());
  	}
-
-/**
+ /**
  * test validation
  *s
  * @return void
  */
- 	public function testValidation_ModelEmpty(){
+    public function testValidation_ModelEmpty(){
+        $test = $this->_set_success_data();
+        $test['model'] = '';
+        $this->Image->set($test);
+        $this->assertFalse($this->Image->validates());
+        $fields = $this->Image->invalidFields();
+        $this->assertArrayHasKey('model',$fields);
+    }
+/**
+ * test validation
+ *
+ * @return void
+ */
+ 	public function testValidation_File_Name_Success(){
 		$test = $this->_set_success_data();
-		$test['model'] = '';
+		$test['file']['name'] = 'test_101.jpg';
 		$this->Image->set($test);
-		$this->assertFalse($this->Image->validates());
-		$fields = $this->Image->invalidFields();
-		$this->assertArrayHasKey('model',$fields);
- 	}
+		$result = $this->Image->validates();
+		$this->assertTrue($result);
+
+		$test['file']['name'] = 'test-1001.jpg';
+		$this->Image->set($test);
+		$result = $this->Image->validates();
+		$this->assertTrue($result);
+
+		$test['file']['name'] = '-test-1001.jpg';
+		$this->Image->set($test);
+		$result = $this->Image->validates();
+		$this->assertTrue($result);
+
+
+		$test['file']['name'] = 't..est.test..jpg';
+		$result = $this->Image->validates();
+		$this->assertTrue($result);
+	}
 /**
  * test validation
  *
@@ -97,9 +130,19 @@ Class ImageTest extends CakeTestCase{
 		$test = $this->_set_success_data();
 		$test['file']['name'] = '日本語のファイル名.jpg';
 		$this->Image->set($test);
-		$this->assertFalse($this->Image->validates());
+		$result = $this->Image->validates();
+		$this->assertFalse($result);
 		$fields = $this->Image->invalidFields();
 		$this->assertArrayHasKey('file',$fields);
+
+		$test['file']['name'] = '-a<aa>tes**test.jpg';
+		$result = $this->Image->validates();
+		$this->assertFalse($result);
+
+		$test['file']['name'] = '-@test@test.jpg';
+		$result = $this->Image->validates();
+		$this->assertFalse($result);
+
  	}
 /**
  * test validation

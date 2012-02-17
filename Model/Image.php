@@ -54,6 +54,7 @@ Class Image extends AppModel{
 			),
 		),
 	);
+
 /**
  * Validation checkFilename
  *
@@ -61,7 +62,7 @@ Class Image extends AppModel{
  */
 	public function checkFilename($file) {
 		if(!empty($file['file']['name'])){
-			if (preg_match("/^(^[a-zA-Z0-9\-\.]+)\.([a-zA-Z]+)$/", $file['file']['name'])) {
+			if (preg_match("/^(^[a-zA-Z0-9\-\.\_]+)\.([a-zA-Z]+)$/", $file['file']['name'])) {
 				return true;
 			} else {
 				return false;

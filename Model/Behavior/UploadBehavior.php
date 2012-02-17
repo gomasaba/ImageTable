@@ -30,13 +30,51 @@ class UploadBehavior extends ModelBehavior {
 			}
 			if(empty($model->data[$model->alias]['file']['tmp_name'])){
 				unset($model->data[$model->alias]);
-			}			
+			}
 		}
 		if(!isset($model->data[$model->alias]['file'])){
 				unset($model->data[$model->alias]);
+		}else{
+			if(!$this->checkfile($model->data[$model->alias]['file'])){
+				unset($model->data[$model->alias]);
+			}			
+		}
+
+		return true;
+	}
+
+	public function checkfile(&$file){
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mime = finfo_file($finfo, $file['tmp_name']);
+		$allow = array(
+			'gif' => 'image/gif',
+			'jpeg' => 'image/jpeg',
+			'jpg' => 'image/jpeg',
+			'jpe' => 'image/jpeg',
+			'png' => 'image/png',
+		);
+		if(!in_array($mime,$allow)){
+			return false;
+		}
+		$pathinfo = pathinfo($file['name']);
+		if($allow[$pathinfo['extension']] != $mime){
+			switch($mime){
+				case 'image/jpeg' :
+					$newext = 'jpg';
+					break;
+				case 'image/gif' :
+					$newext = 'gif';
+					break;
+				case 'image/png' :
+					$newext = 'png';
+					break;
+			}
+			$file['name'] = $pathinfo['filename'] .'.'.$newext;
 		}
 		return true;
 	}
+
+
 /**
  *  Before Save
  *
