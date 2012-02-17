@@ -130,10 +130,22 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 				'dependent' => true,
 			),
 			'SubPhoto' => array(
-				'className' => 'Image',
+				'className' => 'ImageTable.Image',
 				'foreignKey' => 'foreign_key',
 				'conditions' => array('SubPhoto.model' => 'Post', 'SubPhoto.groupname' => 'sub'),
 				'dependent' => true,
+			),
+			'User' => array(
+				'className' => 'User',
+			),
+			'Category' => array(
+				'className' => 'Category',
+			),
+			'DammyImage' => array(
+				'className' => 'DammyImage',
+			),
+			'Image' => array(
+				'className' => 'Dammy.Image',
 			),
 		);
 		$expects = array(

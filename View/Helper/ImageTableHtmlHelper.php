@@ -68,12 +68,10 @@ class ImageTableHtmlHelper extends AppHelper {
 				}
 			}
 		}
-		if(count($out)>0){
-			if($this->autoRenderString){
-				return implode("\n",$out);				
-			}
-			return $out;
+		if($this->autoRenderString){
+			return implode("\n",$out);
 		}
+		return $out;
 	}
 
 	public function prepare($assoc){
@@ -86,10 +84,12 @@ class ImageTableHtmlHelper extends AppHelper {
 		};
 		$return = array();
 		foreach ($assoc as $className => $value) {
-			$maping['className'] = $className;
-			$maping['model'] =  $search($value['conditions'],'model');
-			$maping['groupname'] = $search($value['conditions'],'groupname');
-			array_push($return,$maping);
+			if(preg_match('/^Image$|ImageTable\.Image$/',$value['className'])){
+				$maping['className'] = $className;
+				$maping['model'] =  $search($value['conditions'],'model');
+				$maping['groupname'] = $search($value['conditions'],'groupname');
+				array_push($return,$maping);			
+			}
 		}
 		return $return;
 	}
@@ -120,7 +120,6 @@ class ImageTableHtmlHelper extends AppHelper {
 		if(array_key_exists('id',$record) && array_key_exists('filename',$record) && !empty($record['id']) && !empty($record['filename'])){
 			$fullpath = $this->getPath($record);
 			$url = (Configure::read('ImageTable.upload_url')) ? Configure::read('ImageTable.upload_url') : DS.IMAGES_URL;	
-			var_dump(IMAGES_URL);
 			if(isset($option['prefix'])){
 				$path = DS.$record['id'].DS.$option['prefix'].'_'.$record['filename'];
 				unset($option['prefix']);
