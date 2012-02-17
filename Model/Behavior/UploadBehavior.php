@@ -24,15 +24,19 @@ class UploadBehavior extends ModelBehavior {
 
 
 	public function beforeValidate(Model $model) {
-		if(!$this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
-			unset($model->data[$model->alias]);
+		if(isset($model->data[$model->alias]['file']['tmp_name'])){
+			if(!$this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
+				unset($model->data[$model->alias]);
+			}
+			if(empty($model->data[$model->alias]['file']['tmp_name'])){
+				unset($model->data[$model->alias]);
+			}			
 		}
-		if(empty($model->data[$model->alias]['file']['tmp_name'])){
-			unset($model->data[$model->alias]);
-		}		
+		if(!isset($model->data[$model->alias]['file'])){
+				unset($model->data[$model->alias]);
+		}
 		return true;
 	}
-
 /**
  *  Before Save
  *
@@ -79,7 +83,7 @@ class UploadBehavior extends ModelBehavior {
  */
 	public function prepare(Model $model){
 		if($this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
-			$filename = $model->data[$model->alias]['file']['name'];
+			$filename = strtolower($model->data[$model->alias]['file']['name']);
 			$model->data[$model->alias]['filename'] = $model->data[$model->alias]['file']['name'];
 			$model->data[$model->alias]['type'] = substr($filename, strrpos($filename, '.') + 1);
 		}

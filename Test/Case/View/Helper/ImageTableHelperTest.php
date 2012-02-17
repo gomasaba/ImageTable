@@ -213,6 +213,114 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 		$this->assertTag($expected,$render);
 
  	}
+
+/**
+ * input form add
+ *
+ */
+ 	public function testinputform_Add_Array(){
+		$_SERVER['REQUEST_METHOD'] = 'get';
+		$this->ImgTblHelper->autoRenderString = false;
+		$render = $this->ImgTblHelper->autoform('Post');
+		$this->assertTrue(is_array($render));
+		//1
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'file',
+				'name' => 'data[MainPhoto][file]',
+			)
+		);
+		$this->assertTag($expected,$render[0]);
+	} 	
+/**
+ * input form add
+ *
+ */
+ 	public function testinputform_Post_Error(){
+		$_SERVER['REQUEST_METHOD'] = 'post';
+		$this->ImgTblHelper->request->data = array(
+	 		'MainPhoto'=>array(
+				'groupname' => 'main',
+				'model' => 'Post',
+				'file' => array(
+						'name' => 'test.jpg',
+						'type' => 'image/jpeg',
+						'tmp_name' => '/tmp/dammy',
+						'error' => 0,
+						'size' => 827000,
+				),		 	),
+	 		'PhotoAlbum'=>array(
+	 			array(
+				'groupname' => 'main',
+				'model' => 'Post',
+				'file' => array(
+						'name' => 'test.jpg',
+						'type' => 'image/jpeg',
+						'tmp_name' => '/tmp/dammy',
+						'error' => 0,
+						'size' => 827000,
+						),	 				
+		 		),
+		 	),
+	 	);
+	 	$render = $this->ImgTblHelper->autoform('Post');
+		//1
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'file',
+				'name' => 'data[MainPhoto][file]',
+			)
+		);
+		$this->assertTag($expected,$render);
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'hidden',
+				'name' => 'data[MainPhoto][model]',
+				'value' => 'Post',
+			)
+		);
+		$this->assertTag($expected,$render);
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'hidden',
+				'name' => 'data[MainPhoto][groupname]',
+				'value' => 'main',
+			)
+		);
+		$this->assertTag($expected,$render);
+		//2
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'file',
+				'name' => 'data[PhotoAlbum][1][file]',
+			)
+		);
+		$this->assertTag($expected,$render);
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'hidden',
+				'name' => 'data[PhotoAlbum][1][model]',
+				'value' => 'Post',
+			)
+		);
+		$this->assertTag($expected,$render);
+		$expected = array(
+			'tag' => 'input',
+			'attributes'=>array(
+				'type' => 'hidden',
+				'name' => 'data[PhotoAlbum][1][groupname]',
+				'value' => 'album',
+			)
+		);
+		$this->assertTag($expected,$render);
+ 	}
+
 /**
  * input form add
  *
@@ -262,6 +370,14 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 			)
 		);
 		$this->assertTag($expected,$render);
+		//MainImage hidden
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[MainPhoto][id]','value'=>'2'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[MainPhoto][model]','value'=>'Post'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[MainPhoto][filename]','value'=>'test.jpg'));
+		$this->assertTag($expected,$render);
+
 		//Album 1
 		$this->assertRegExp('/3\/thumb_s_test\.jpg/',$render);
 		$expected = array(
@@ -270,6 +386,15 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 				'href'=>'/ImageTable/image/delete/3',
 			)
 		);
+		//Album 1 hidden
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][3][id]','value'=>'3'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][3][model]','value'=>'Post'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][3][filename]','value'=>'test.jpg'));
+		$this->assertTag($expected,$render);
+
+
 		//Album 2
 		$this->assertRegExp('/4\/thumb_s_test\.jpg/',$render);
 		$expected = array(
@@ -278,12 +403,22 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 				'href'=>'/ImageTable/image/delete/4',
 			)
 		);
+		//Album 2 hidden
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][4][id]','value'=>'4'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][4][model]','value'=>'Post'));
+		$this->assertTag($expected,$render);
+		$expected = array('tag' => 'input','attributes'=>array('type'=>'hidden','name'=>'data[PhotoAlbum][4][filename]','value'=>'test.jpg'));
+		$this->assertTag($expected,$render);
+
+
+
 		//Album New
 		$expected = array(
 			'tag' => 'input',
 			'attributes'=>array(
 				'type' => 'file',
-				'name' => 'data[PhotoAlbum][1][file]',
+				'name' => 'data[PhotoAlbum][5][file]',
 			)
 		);
 		$this->assertTag($expected,$render);
@@ -291,7 +426,7 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 			'tag' => 'input',
 			'attributes'=>array(
 				'type' => 'hidden',
-				'name' => 'data[PhotoAlbum][1][model]',
+				'name' => 'data[PhotoAlbum][5][model]',
 				'value' => 'Post',
 			)
 		);
@@ -300,7 +435,7 @@ class ImageTableHtmlHelperTestCase extends CakeTestCase {
 			'tag' => 'input',
 			'attributes'=>array(
 				'type' => 'hidden',
-				'name' => 'data[PhotoAlbum][1][groupname]',
+				'name' => 'data[PhotoAlbum][5][groupname]',
 				'value' => 'album',
 			)
 		);

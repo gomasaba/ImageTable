@@ -31,6 +31,8 @@ create images table
 
 Model/Post.php
 -----
+example
+
 	public $hasOne = array(
 		'MainPhoto' => array(
 			'className' => 'ImageTable.Image',
@@ -58,6 +60,21 @@ View/Post/add.ctp
 		echo $this->Form->input('MainPhoto.model',array('type' => 'hidden','value' => 'Post'));
 	?>
 
+	or
+
+	<?php
+		echo $this->ImageTableHtml->autoform();
+	?>
+
+View/Post/add.ctp
+-----
+example
+
+	<?php
+		echo $this->ImageTableHtml->autoform(array('prefix'=>'thumb_s'));
+	?>
+
+
 
 Controller/PostController.ctp
 -----
@@ -71,23 +88,15 @@ Controller/PostController.ctp
 
 bootstrap.php
 -----
+example
 	
-	// enable Plugin rotes.
 	CakePlugin::load('ImageTable',array('routes'=>true));
-
-		example
-		image/:id/:width/:height/:filenmae.jpg -> image/1/100/75/test.jpg
-		image/delete/:id  -> image/delete/1
-
-	// upload base URL  default getenv('SERVE_NAME')
 	Configure::write('ImageTable.upload_url','http://'.getenv('SERVER_NAME').DS.'media');
-
-	// upload directory default WWW_ROOT
 	Configure::write('ImageTable.upload_base',getenv('DOCUMENT_ROOT').DS.'media');
-
-	// Imagine Library default Vendors
 	Configure::write('ImageTable.Imagine_base',realpath(getenv('DOCUMENT_ROOT'). '/../lib/Imagine'));
-		or
+
+	or
+
 	git submodule update --init
 
 
@@ -97,31 +106,26 @@ delete file
 	$this->Html->link('delete',array('controller'=>'image','action'=>'delete',$id,'plugin'=>'ImageTable'));
 	
 
-save path
+
+Dynamic create thumbnail
 -----
-	/{ImageTable.upload_base} or { WWW_ROOT} / images primary_key / upload_filename.ext
+example
 
+upload_base = /www/html/upload/
 
-Uses ImageTableHtmlHelper
------
-	
-	Dynamic create thumbnail
+	setup .htaccess
 
-	<?php echo $this->ImageTableHtml->image($post['MainPhoto']);?> ->originam image
-	
-
-	Dynamic Image uses.
-
-	option.
-	<?php echo $this->ImageTableHtml->image($post['MainPhoto'],arary('w'=>200,'h'=>200,'alt'=>'test'));?>
-	<img src="http://example/cakepath/image/1/100/75/test.jpg" />
-
-	example. upload_base = media and cake other dirctory...
-	-----
 		RewriteEngine on
-		RewriteCond %{REQUEST_FILENAME} media/(.*)$
+		RewriteCond %{REQUEST_FILENAME} upload/(.*)$
 		RewriteCond %{REQUEST_FILENAME} !-f
 		RewriteCond %{REQUEST_FILENAME} !-d
-		RewriteRule ^media/(.*)$ http://example/cakepath/image/$1 [L]
+		RewriteRule ^upload/(.*)$ http://localhost/image/$1 [L]
+	
+		
+	<img src="http://localhost/upload/1/100/75/test.jpg" />
+
+	fisrttime create thumbnail.
+	secondtime access generate file.
+		
 
 
