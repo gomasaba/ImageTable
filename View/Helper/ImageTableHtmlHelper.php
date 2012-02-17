@@ -98,8 +98,8 @@ class ImageTableHtmlHelper extends AppHelper {
 		$out = '';
 		$key = ($multi) ? $prepared['className'].'.'.$multi : $prepared['className'];
 		$out .= $this->Form->input($key.'.file',array_merge(array('type'=>'file'),$attribute));
-		$out .= $this->Form->input($key.'.model',array('type'=>'hidden','value'=>$prepared['model']));
-		$out .= $this->Form->input($key.'.groupname',array('type'=>'hidden','value'=>$prepared['groupname']));
+		$out .= $this->Form->input($key.'.model',array_merge(array('type'=>'hidden','value'=>$prepared['model']),$attribute));
+		$out .= $this->Form->input($key.'.groupname',array_merge(array('type'=>'hidden','value'=>$prepared['groupname']),$attribute));
 		return $out;
 	}
 

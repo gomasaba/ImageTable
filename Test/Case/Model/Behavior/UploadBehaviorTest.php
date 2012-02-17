@@ -133,7 +133,6 @@ class UploadBehaviorTestCase extends CakeTestCase {
  	public function testsetup(){
  		// $this->Post->MainPhoto->save(array('test'=>'dammy'));
  	}
-
 /**
  * test
  * @todo
@@ -231,7 +230,7 @@ class UploadBehaviorTestCase extends CakeTestCase {
 				'groupname' => 'main',
 				'model' => 'Post',
 				'file' => array(
-						'name' => 'test.jpg',
+						'name' => 'test.gif',
 						'type' => 'image/jpeg',
 						'tmp_name' => $file,
 						'error' => 0,
@@ -245,6 +244,7 @@ class UploadBehaviorTestCase extends CakeTestCase {
 	 						'conditions'=>array(
 		 							'Post.id'=>$this->Post->getLastInsertID()
 				 			)));
+		$this->assertEqual('test.jpg',$result['MainPhoto']['filename']);
 		$phto_id = $result['MainPhoto']['id'];
 		$expects_1 = TMP.'tests'.DS.$phto_id.DS.'test.jpg';
 		$expects_2 = TMP.'tests'.DS.$phto_id.DS.'thumb_s_test.jpg';
