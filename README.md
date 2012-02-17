@@ -55,25 +55,27 @@ View/Post/add.ctp
 -----
 	<?php echo $this->Form->create('Post',array('type'=>'file'));?>
 	<?php
-		echo $this->Form->input('MainPhoto.file',array('type' => 'file'));
-		echo $this->Form->input('MainPhoto.group',array('type' => 'hidden','value' => 'main'));
-		echo $this->Form->input('MainPhoto.model',array('type' => 'hidden','value' => 'Post'));
-	?>
-
-	or
-
-	<?php
 		echo $this->ImageTableHtml->autoform();
 	?>
 
-View/Post/add.ctp
+example custom HTML tag use.
+
+	<?php
+		$this->ImageTableHtml->autoRenderString = false;
+		echo $this->Html->nestedList(
+			$this->ImageTableHtml->autoform(array('label'=>false))
+			,array('class'=>'inputThumb')
+		);
+	?>
+
+
+View/Post/edit.ctp
 -----
 example
 
 	<?php
 		echo $this->ImageTableHtml->autoform(array('prefix'=>'thumb_s'));
 	?>
-
 
 
 Controller/PostController.ctp

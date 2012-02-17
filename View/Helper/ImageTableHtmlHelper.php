@@ -13,7 +13,7 @@ class ImageTableHtmlHelper extends AppHelper {
 
 	public $autoRenderString = true;
 
-	public function autoform($model=null,$attribute=null){
+	public function autoform($model=null,$attribute=array()){
 		if (is_array($model) && empty($attribute)) {
 			$attribute = $model;
 			$model = null;
@@ -21,6 +21,7 @@ class ImageTableHtmlHelper extends AppHelper {
 		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
 			$model = key($this->request->params['models']);
 		}
+
 		$modelObj = ClassRegistry::getObject($model);
 
 		$this->hasOne = (isset($modelObj->hasOne)) ? $this->prepare($modelObj->hasOne) : false;
@@ -35,7 +36,7 @@ class ImageTableHtmlHelper extends AppHelper {
 					$out[] = $this->__editfile($data,$attribute);
 					unset($data);
 				}else{
-					$out[] = $this->__inputfile($prepared);						
+					$out[] = $this->__inputfile($prepared,$attribute);						
 				}
 			}
 		}
@@ -62,7 +63,7 @@ class ImageTableHtmlHelper extends AppHelper {
 				}
 				if(!isset($next_id)) $next_id = 1;
 				while($next_id < $this->hasManyCount){
-					$out[] = $this->__inputfile($prepared,$next_id);
+					$out[] = $this->__inputfile($prepared,$attribute,$next_id);
 					$next_id++;
 				}
 			}
@@ -93,10 +94,10 @@ class ImageTableHtmlHelper extends AppHelper {
 		return $return;
 	}
 
-	protected function __inputfile($prepared,$multi=false){
+	protected function __inputfile($prepared,$attribute=array(),$multi=false){
 		$out = '';
 		$key = ($multi) ? $prepared['className'].'.'.$multi : $prepared['className'];
-		$out .= $this->Form->input($key.'.file',array('type'=>'file'));
+		$out .= $this->Form->input($key.'.file',array_merge(array('type'=>'file'),$attribute));
 		$out .= $this->Form->input($key.'.model',array('type'=>'hidden','value'=>$prepared['model']));
 		$out .= $this->Form->input($key.'.groupname',array('type'=>'hidden','value'=>$prepared['groupname']));
 		return $out;
