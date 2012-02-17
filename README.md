@@ -51,16 +51,16 @@ example
 		'MainPhoto' => array(
 			'className' => 'ImageTable.Image',
 			'foreignKey' => 'foreign_key',
-			'conditions' => array('MainPhoto.model' => 'Post', 'MainPhoto.group' => 'main'),
+			'conditions' => array('MainPhoto.model' => 'Post', 'MainPhoto.groupname' => 'top'),
 			'dependent' => true,
 		),
 	);
 
 	public $hasMany = array(
-		'Photo' => array(
+		'PhotoAlbum' => array(
 			'className' => 'ImageTable.Image',
 			'foreignKey' => 'foreign_key',
-			'conditions' => array('Photo.model' => 'Post'),
+			'conditions' => array('PhotoAlbum.model' => 'Post', 'PhotoAlbum.groupname' => 'detail'),
 			'dependent' => true,
 		),
 	);
@@ -69,6 +69,7 @@ View/Post/add.ctp
 -----
 	<?php echo $this->Form->create('Post',array('type'=>'file'));?>
 	<?php
+		$this->ImageTableHtml->hasManyCount = 10; //default=3
 		echo $this->ImageTableHtml->autoform();
 	?>
 
@@ -91,6 +92,13 @@ example
 		echo $this->ImageTableHtml->autoform(array('prefix'=>'thumb_s'));
 	?>
 
+basic
+
+	<?php
+	    echo $this->Form->input('MainPhoto.file',array('type' => 'file'));
+	    echo $this->Form->input('MainPhoto.groupname',array('type' => 'hidden','value' => 'main'));
+	    echo $this->Form->input('MainPhoto.model',array('type' => 'hidden','value' => 'Post'));
+	?>
 
 Controller/PostController.ctp
 -----
