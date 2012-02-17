@@ -29,6 +29,20 @@ create images table
 	cake schema create --plugin=ImageTable
 
 
+bootstrap.php
+-----
+custom example
+	
+	CakePlugin::load('ImageTable',array('routes'=>true)); // ROOT/image/ routing active
+	Configure::write('ImageTable.upload_url','http://'.getenv('SERVER_NAME').DS.'media'); // default IMAGES_URL
+	Configure::write('ImageTable.upload_base',getenv('DOCUMENT_ROOT').DS.'media'); //default IMAGES
+	Configure::write('ImageTable.Imagine_base',realpath(getenv('DOCUMENT_ROOT'). '/../Imagine')); // another path Imagine
+
+
+Imagine submodule in Vendor
+
+	git submodule update --init
+
 Model/Post.php
 -----
 example
@@ -85,21 +99,6 @@ Controller/PostController.ctp
 	?>
 
 	Post save success beforeSave run upload files..
-	
-
-
-bootstrap.php
------
-example
-	
-	CakePlugin::load('ImageTable',array('routes'=>true));
-	Configure::write('ImageTable.upload_url','http://'.getenv('SERVER_NAME').DS.'media');
-	Configure::write('ImageTable.upload_base',getenv('DOCUMENT_ROOT').DS.'media');
-	Configure::write('ImageTable.Imagine_base',realpath(getenv('DOCUMENT_ROOT'). '/../lib/Imagine'));
-
-	or
-
-	git submodule update --init
 
 
 delete file
@@ -126,8 +125,8 @@ upload_base = /www/html/upload/
 		
 	<img src="http://localhost/upload/1/100/75/test.jpg" />
 
-	fisrttime create thumbnail.
-	secondtime access generate file.
+	fisrt time create thumbnail.
+	second time access generate file.
 		
 
 

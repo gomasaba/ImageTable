@@ -94,7 +94,7 @@ class UploadBehavior extends ModelBehavior {
  */
 	public function getPath(Model $model){
 		if($model->id !=null){
-			$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : WWW_ROOT;
+			$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : IMAGES;
 			$dir = rtrim($dir,DS).DS.$model->id;
 			if(!is_dir($dir)){
 				mkdir($dir,0777,true);

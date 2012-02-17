@@ -119,7 +119,8 @@ class ImageTableHtmlHelper extends AppHelper {
 	public function image(array $record,$option=array()){
 		if(array_key_exists('id',$record) && array_key_exists('filename',$record) && !empty($record['id']) && !empty($record['filename'])){
 			$fullpath = $this->getPath($record);
-			$url = (Configure::read('ImageTable.upload_url')) ? Configure::read('ImageTable.upload_url') : Router::url('/',true);	
+			$url = (Configure::read('ImageTable.upload_url')) ? Configure::read('ImageTable.upload_url') : DS.IMAGES_URL;	
+			var_dump(IMAGES_URL);
 			if(isset($option['prefix'])){
 				$path = DS.$record['id'].DS.$option['prefix'].'_'.$record['filename'];
 				unset($option['prefix']);
@@ -137,7 +138,7 @@ class ImageTableHtmlHelper extends AppHelper {
 	}
 
 	public function getPath(array $record){
-		$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : WWW_ROOT;
+		$dir = (Configure::read('ImageTable.upload_base')) ? Configure::read('ImageTable.upload_base') : IMAGES;
 		$dir = rtrim($dir,DS).DS.$record{'id'};
 		return $dir;		
 	}
