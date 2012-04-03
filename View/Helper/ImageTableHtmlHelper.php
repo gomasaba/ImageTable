@@ -108,7 +108,7 @@ class ImageTableHtmlHelper extends AppHelper {
 		$model = key($data);
 		$key = ($multi) ? key($data).'.'.$multi : key($data);		
 		$out .= $this->image($data[$model],$attribute);
-		$out .= $this->Html->link(__('delete'),array('controller'=>'image','action'=>'delete',$data[$model]['id'],'plugin'=>'ImageTable'));
+		$out .= $this->Html->link(__('delete'),array('controller'=>'image','action'=>'delete',$data[$model]['id'],'plugin'=>'ImageTable'),null,__('Are you sure you want to delete # %s?',$data[$model]['id']));
 		$out .= $this->Form->hidden($key.'.id',array('value'=>$data[$model]['id']));
 		$out .= $this->Form->hidden($key.'.model',array('value'=>$data[$model]['model']));
 		$out .= $this->Form->hidden($key.'.filename',array('value'=>$data[$model]['filename']));

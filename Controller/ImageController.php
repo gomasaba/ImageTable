@@ -2,6 +2,9 @@
 App::uses('Image', 'ImageTable.Model');
 class ImageController extends AppController {
 
+	public $components = array('Session');
+
+
 	public $uses = array('ImageTable.Image');
 
 /**
