@@ -9,7 +9,7 @@ Class Image extends AppModel{
 					'thumb_s' => array(
 						'w' => 100,
 						'h' => 75,
-						'crop' => true,
+						'crop' => false,
 					),
 					'thumb_m' => array(
 						'w' => 300,
