@@ -12,9 +12,11 @@ class AllTests extends PHPUnit_Framework_TestSuite {
  */
 	public static function suite() {
 
-		$suite = new CakeTestSuite('All Tests');
-		$suite->addTestDirectory(TESTS .'Case'.DS. 'Controller');
-		$suite->addTestDirectory(TESTS .'Case'.DS. 'Model');
+		$suite = new PHPUnit_Framework_TestSuite('All Tests');
+		$suite->addTestFile(TESTS.'Case'.DS.'Controller'.DS. 'ImageControllerTest.php');
+		$suite->addTestFile(TESTS.'Case'.DS.'Model'.'ImageTest.php');
+		$suite->addTestFile(TESTS.'Case'.DS.'Model'.DS.'Behavior'.DS.'UploadBehaviorTest.php');
+		$suite->addTestFile(TESTS.'Case'.DS.'View'.DS.'Helper'.DS.'ImageTableHelperTest.php');
 		return $suite;
 	}
 }
