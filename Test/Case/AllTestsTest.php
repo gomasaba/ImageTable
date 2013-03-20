@@ -14,7 +14,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 
 		$suite = new PHPUnit_Framework_TestSuite('All Tests');
 		$suite->addTestFile(__DIR__.DS.'Controller'.DS. 'ImageControllerTest.php');
-		$suite->addTestFile(__DIR__.DS.'Model'.'ImageTest.php');
+		$suite->addTestFile(__DIR__.DS.'Model'.DS.'ImageTest.php');
 		$suite->addTestFile(__DIR__.DS.'Model'.DS.'Behavior'.DS.'UploadBehaviorTest.php');
 		$suite->addTestFile(__DIR__.DS.'View'.DS.'Helper'.DS.'ImageTableHelperTest.php');
 		return $suite;
