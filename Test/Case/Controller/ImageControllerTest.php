@@ -69,9 +69,9 @@ class ImageControllerTestCase extends CakeTestCase {
 		$iterator = new RecursiveDirectoryIterator($dir);
 		foreach (new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::CHILD_FIRST) as $file) {
 			if ($file->isDir()) {
-				rmdir($file->getPathname());
+				@rmdir($file->getPathname());
 			} else {
-				unlink($file->getPathname());
+				@unlink($file->getPathname());
 			}
 		}
 	}

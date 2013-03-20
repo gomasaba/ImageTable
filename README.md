@@ -3,6 +3,10 @@ Simple upload Image and Generate Thumbnail for CakePHP2
 
 Thumbnail Generate from Imagine
 
+[![Build Status](https://travis-ci.org/milds/ImageTable.png)](https://travis-ci.org/milds/ImageTable)
+
+
+
 [Imagine] (https://github.com/avalanche123/Imagine)
 
 I inspire from MediaPlugin and Attach
