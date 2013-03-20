@@ -150,7 +150,7 @@ class UploadBehaviorTestCase extends CakeTestCase {
 		$actual = $this->Post->MainPhoto->Behaviors->TestUpload->getPath($this->Post);
 		$this->assertEqual($expects,$actual);
 		$this->assertTrue(is_dir($expects));
-		rmdir($expects);
+		@rmdir($expects);
  	}
 /**
  * test
@@ -417,7 +417,7 @@ class UploadBehaviorTestCase extends CakeTestCase {
 		$this->assertTrue(!file_exists($expects_1));
 		$this->assertTrue(!file_exists($expects_2));		
 		$this->assertTrue(!file_exists($expects_3));
-		@rmdir(TMP.'tests'.DS.$phto_id);
+		@rmdir(TMP.'tests'.DS.$photo_id);
 
  	}
 

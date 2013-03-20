@@ -24,4 +24,7 @@ before_script:
     }" > ../cakephp/app/Config/database.php
  
 script:
-  - ./lib/Cake/Console/cake test ImageTable AllTests --stderr
+  - ./lib/Cake/Console/cake test ImageTable Controller/ImageController --stderr
+  - ./lib/Cake/Console/cake test ImageTable Model/Image --stderr
+  - ./lib/Cake/Console/cake test ImageTable Model/Behavior/UploadBehavior --stderr 
+  - ./lib/Cake/Console/cake test ImageTable View/Helper/ImageTableHelper --stderr 
