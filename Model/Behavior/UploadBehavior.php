@@ -150,20 +150,23 @@ class UploadBehavior extends ModelBehavior {
  */
 	public function process(Model $model){
 		$path = $this->getPath($model);
-		if($this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
-			$img = $model->data[$model->alias];
-			if($this->move_uploaded_file($img['file']['tmp_name'], $path.DS.$img['filename'])){
-				if(array_key_exists('thumbnail',$this->config)){
-					$this->createThumbnail($model);
+		if(isset($model->data[$model->alias]['file'])){
+			if($this->is_uploaded_file($model->data[$model->alias]['file']['tmp_name'])){
+				$img = $model->data[$model->alias];
+				if($this->move_uploaded_file($img['file']['tmp_name'], $path.DS.$img['filename'])){
+					if(array_key_exists('thumbnail',$this->config)){
+						$this->createThumbnail($model);
+					}
+					return true;
+				}else{
+					$model->delete();
+					return false;
 				}
-				return true;
 			}else{
-				$model->delete();
 				return false;
-			}
-		}else{
-			return false;
+			}			
 		}
+		return true;
 	}	
 /**
  * 
