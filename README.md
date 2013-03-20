@@ -3,7 +3,7 @@ Simple upload Image and Generate Thumbnail for CakePHP2
 
 Thumbnail Generate from Imagine
 
-"!https://travis-ci.org/milds/ImageTable.png!":https://travis-ci.org/milds/ImageTable
+[![Build Status](https://travis-ci.org/milds/ImageTable.png)](https://travis-ci.org/milds/ImageTable)
 
 
 
