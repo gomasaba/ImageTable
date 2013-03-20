@@ -1,4 +1,5 @@
 <?php
+App::uses('AppController', 'Controller');
 App::uses('Image', 'ImageTable.Model');
 class ImageController extends AppController {
 
